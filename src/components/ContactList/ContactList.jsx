@@ -1,50 +1,47 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { removeContact } from '../../redux/contacts/contacts-operations.js';
-import { getVisibleContacts } from '../../redux/contacts/contacts-selectors.js';
-import { AiFillDelete } from 'react-icons/ai';
-import { RiContactsLine } from 'react-icons/ri';
+import { useSelector } from 'react-redux';
 import {
-  ContactListItem,
-  ContactIcon,
-  ContactListWrapper,
-  ContactListName,
-  ContactListPhone,
-  ContactDetails,
-  DeleteButton,
-} from './ContactListStyles.jsx';
-
-const ContactItem = ({ id, name, phone, onDelete }) => (
-  <ContactListItem key={id}>
-    <ContactIcon>
-      <RiContactsLine />
-    </ContactIcon>
-    <ContactDetails>
-      <ContactListName>{name}</ContactListName>
-      <ContactListPhone>{phone}</ContactListPhone>
-    </ContactDetails>
-    <DeleteButton type="button" onClick={() => onDelete(id)}>
-      <AiFillDelete />
-    </DeleteButton>
-  </ContactListItem>
-);
+  selectContacts,
+  selectContactsFilter,
+} from 'redux/constacts/selectors';
+// import Notiflix from 'notiflix';
+import { Paper, Grid } from '@mui/material';
+import ContactItem from 'components/ContactListItem';
 
 function ContactList() {
-  const visibleContacts = useSelector(getVisibleContacts);
-  const dispatch = useDispatch();
+  const filter = useSelector(selectContactsFilter);
+  const contacts = useSelector(selectContacts);
+
+  if (!contacts || !Array.isArray(contacts) || contacts.length === 0) {
+    return null;
+  }
+
+  const filteredContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
-    <ContactListWrapper>
-      {visibleContacts.map(({ id, name, phone }) => (
-        <ContactItem
-          key={id}
-          id={id}
-          name={name}
-          phone={phone}
-          onDelete={(id) => dispatch(removeContact(id))}
-        />
-      ))}
-    </ContactListWrapper>
+    <Paper
+      sx={{
+        p: 2,
+      }}
+    >
+      <Grid
+        container
+        spacing={3}
+        justifyContent="space-between"
+        sx={{
+          maxWidth: 600,
+          margin: '0 auto',
+        }}
+      >
+        {filteredContacts.map(({ id, name, number }) => (
+          <Grid item xs={12} key={id}>
+            <ContactItem id={id} name={name} phone={number} />
+          </Grid>
+        ))}
+      </Grid>
+    </Paper>
   );
 }
 

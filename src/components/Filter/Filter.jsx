@@ -1,33 +1,49 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setFilter } from '../../redux/filter/filter-actions';
-import {
-  FilterLabel,
-  FilterInput,
-  FilterWrapper,
-} from './FilterStyles';
-import { selectFilter } from '../../redux/filter/filter-selectors'
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContactsFilter } from 'redux/constacts/selectors';
+import { setFilter } from 'redux/constacts/filterSlice';
+import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
-function Filter() {
-  const filter = useSelector(selectFilter);
-
+function FilterComponent() {
   const dispatch = useDispatch();
-  const handleFilterContacts = e => {
-    return dispatch(setFilter(e.currentTarget.value));
+  const filter = useSelector(selectContactsFilter);
+
+  const handleFilterChange = e => {
+    dispatch(setFilter(e.target.value.trim()));
   };
+
   return (
-    <FilterWrapper>
-    <FilterLabel>
-    Find contacts by name:
-    </FilterLabel>
-    <FilterInput
-      type="text"
-      name="filter"
-      value={filter}
-      onChange={handleFilterContacts}
-    />
-    </FilterWrapper>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mt: 3,
+        mb: 5,
+      }}
+    >
+      <FormControl>
+        <Typography variant="h5" align="center" gutterBottom>
+          Filter contacts:
+        </Typography>
+        <InputLabel htmlFor="filter"></InputLabel>
+        <TextField
+          type="text"
+          placeholder="Enter a name"
+          id="filter"
+          name="filter"
+          value={filter}
+          onChange={handleFilterChange}
+          sx={{ width: '100%', marginTop: '16px', mt: 1 }}
+        />
+      </FormControl>
+    </Box>
   );
 }
 
-export default Filter;
+export default FilterComponent;
